@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import MainNavigator from './src/shared/infrastructure/ui/navigation/MainNavigator';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const [fontsLoaded] = useFonts({
+    Inter: require("./assets/fonts/Inter.ttf"),
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  useEffect(() => {
+    const prepareResources = async () => {
+      await SplashScreen.preventAutoHideAsync();
+    };
+
+    prepareResources();
+  }, []);
+
+  useEffect(() => {
+    const hideSplashScreen = async () => {
+      if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+      }
+    };
+
+    hideSplashScreen();
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return <MainNavigator />;
+}
