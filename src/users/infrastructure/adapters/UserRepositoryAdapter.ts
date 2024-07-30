@@ -3,7 +3,7 @@ import { axiosInstance } from "../../../shared/infrastructure/api/apiConfig";
 import IUserRepositoryPort from "../../application/ports/IUserRepositoryPort";
 import UserEntity from "../../domain/entities/UserEntity";
 import { JwtPayload, jwtDecode } from "jwt-decode";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store'; // Importa expo-secure-store
 
 interface CustomJwtPayload extends JwtPayload {
   data: {
@@ -26,28 +26,29 @@ class UserRepositoryAdapter implements IUserRepositoryPort {
         email,
         password
       });
-
+  
       const { accessToken, refreshToken } = response.data.data;
-
+  
       const decodedAccessToken = jwtDecode<CustomJwtPayload>(accessToken);
       const decodedRefreshToken = jwtDecode<CustomJwtPayload>(refreshToken);
-
-      await AsyncStorage.setItem('accessToken', accessToken);
-      await AsyncStorage.setItem('refreshToken', refreshToken);
-
+  
+      await SecureStore.setItemAsync('accessToken', accessToken);
+      await SecureStore.setItemAsync('refreshToken', refreshToken);
+  
       const foundUser = decodedAccessToken.data;
-
+  
       return new UserEntity({
         id: foundUser.uuid,
         firstName: foundUser.firstName,
         lastName: foundUser.lastName,
         email: foundUser.email,
-        password: "",
+        password: "", // Asegúrate de no almacenar contraseñas en el cliente
         phoneNumber: foundUser.phoneNumber,
         imageUrl: foundUser.imageUrl
       });
     } catch (error) {
       console.error("Error en la autenticación:", error);
+      throw error; // Es una buena práctica propagar el error para que la función llamadora pueda manejarlo
     }
   }
 

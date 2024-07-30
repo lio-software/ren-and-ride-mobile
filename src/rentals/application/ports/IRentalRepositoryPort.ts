@@ -8,6 +8,7 @@ interface IRentalRepositoryPort {
   listByLesseId(lesse_id: string, active?: boolean): Promise<RentalEntity[]>;
   update(rental: RentalEntity, rentalId: string): Promise<RentalEntity>;
   isRentalActiveByVehicleId(vehicle_id: string): Promise<boolean>;
+  getPredictionsByUserId(userId: string): Promise<any>;
 }
 
 export default IRentalRepositoryPort;

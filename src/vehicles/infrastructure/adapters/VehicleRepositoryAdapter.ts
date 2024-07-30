@@ -71,8 +71,6 @@ class VehicleRepositoryAdapter implements IVehicleRepositoryPort {
         },
       });
 
-      console.log('response', response);
-
       const vehicles = response.data.data;
 
       return vehicles.map((vehicle: any) => {

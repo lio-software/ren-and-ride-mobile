@@ -55,9 +55,9 @@ const ProfileScreen = ({ navigation }) => {
         onPress={() => navigation.navigate("LesseeHistory")}
       />
       <MenuOption
-        iconName="credit-card-outline"
-        text="Mis pagos"
-        onPress={() => {}}
+        iconName="chart-line"
+        text="Mi rendimiento"
+        onPress={() => navigation.navigate("MyPerformance")}
       />
       <MenuOption
         iconName="trash-can-outline"

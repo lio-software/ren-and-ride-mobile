@@ -1,10 +1,14 @@
 export const dateToString = (date: string): string => {
   const dateObject = new Date(date);
-  let month = dateObject.toLocaleString("es-MX", { month: "long" });
 
-  month = month.charAt(0).toUpperCase() + month.slice(1);
-  const day = dateObject.getDate();
-  return `${month} ${day}`;
+  // Obtener el mes y el día en UTC
+  const month = dateObject.toLocaleString("es-MX", { month: "long", timeZone: "UTC" });
+  const day = dateObject.getUTCDate();
+
+  // Capitalizar el primer carácter del mes
+  const formattedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+
+  return `${formattedMonth} ${day}`;
 };
 
 export const howManyDays = (start_date: string, end_date: string): number => {

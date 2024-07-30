@@ -79,7 +79,7 @@ const HomeScreen = ({ navigation }) => {
               title={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
               price={vehicle.rentalPrice}
               location={vehicle.address}
-              stars={vehicle.stars}
+              stars={5}
               onPress={() =>
                 navigation.navigate("CarDetails", {
                   vehicleId: vehicle._id,

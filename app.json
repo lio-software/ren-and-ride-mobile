@@ -32,7 +32,8 @@
             "./assets/fonts/Inter.ttf"
           ]
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

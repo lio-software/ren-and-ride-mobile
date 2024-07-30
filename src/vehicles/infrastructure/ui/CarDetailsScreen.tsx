@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Animated,
   Easing,
-  ActivityIndicator,
+  ActivityIndicator, // Importa el ActivityIndicator
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -35,12 +35,7 @@ import { useSelector } from "react-redux";
 import { updateVehicleUseCase } from "../dependencies";
 
 type RootStackParamList = {
-  CarDetails: {
-    vehicleId: string;
-    startDate: string;
-    endDate: string;
-    isCurrentlyRented?: boolean;
-  };
+  CarDetails: { vehicleId: string; startDate: string; endDate: string, isCurrentlyRented?: boolean };
   AddCard: undefined;
   Success: { message: string };
 };
@@ -55,7 +50,7 @@ const CarDetailsScreen = ({ navigation, route }: Props) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [showArrows, setShowArrows] = useState(true);
   const [arrowOpacity] = useState(new Animated.Value(1));
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
 
   const pagerViewRef = React.useRef(null);
   const interactionTimeoutRef = React.useRef(null);
@@ -67,9 +62,9 @@ const CarDetailsScreen = ({ navigation, route }: Props) => {
     try {
       const vehicle = await getVehicleByIdUseCase.execute(vehicleId);
       handleFeatures(vehicle.description);
-      setVehicle(vehicle);
+      setVehicle(vehicle)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Cambia a false después de cargar los datos
     }
   };
 
@@ -91,23 +86,18 @@ const CarDetailsScreen = ({ navigation, route }: Props) => {
       status: "CREATED",
     });
 
-    createRental
-      .execute(newRental)
+    createRental.execute(newRental)
       .then(() => {
         console.log("Renta creada");
-        return updateVehicleUseCase.execute(
-          {
-            ...vehicle,
-            avalible: false,
-          },
-          vehicleId
-        );
+        return updateVehicleUseCase.execute({
+          ...vehicle,
+          avalible: false,
+        }, vehicleId);
       })
       .then(() => {
         console.log("Vehículo actualizado");
         navigation.navigate("Success", {
-          message:
-            "Tu renta ha sido creada exitosamente, espera la confirmación del arrendador.",
+          message: "Tu renta ha sido creada exitosamente, espera la confirmación del arrendador.",
         });
       })
       .catch((error) => {
@@ -154,18 +144,18 @@ const CarDetailsScreen = ({ navigation, route }: Props) => {
 
   const handleInteraction = () => {
     setShowArrows(true);
-    arrowOpacity.setValue(1);
+    arrowOpacity.setValue(1); // Restablece la opacidad a 1
     clearTimeout(interactionTimeoutRef.current);
     interactionTimeoutRef.current = setTimeout(() => {
       Animated.timing(arrowOpacity, {
-        toValue: 0,
-        duration: 1000,
+        toValue: 0, // Desaparecer
+        duration: 1000, // 1 segundo
         easing: Easing.linear,
         useNativeDriver: true,
       }).start(() => {
         setShowArrows(false);
       });
-    }, 2000);
+    }, 2000); // Ocultar flechas después de 2 segundos de inactividad
   };
 
   useEffect(() => {
@@ -251,7 +241,7 @@ const CarDetailsScreen = ({ navigation, route }: Props) => {
 
             <View style={styles.subtitleSecondary}>
               <Icon name="star-outline" size={17} />
-              <Text style={styles.subtitleText}>{vehicle.stars}</Text>
+              <Text style={styles.subtitleText}>5</Text>
             </View>
 
             <Text style={styles.sectionTitle}>Qué ofrece este vehículo</Text>
@@ -276,16 +266,10 @@ const CarDetailsScreen = ({ navigation, route }: Props) => {
 
             <View style={styles.profileContainer}>
               <Image
-                source={
-                  vehicle.userId.imageUrl
-                    ? { uri: vehicle.userId.imageUrl }
-                    : require("../../../../assets/images/defaultprofile.png")
-                }
+                source={vehicle.userId.imageUrl ? { uri: vehicle.userId.imageUrl } : require("../../../../assets/images/defaultprofile.png")}
                 style={styles.profileImage}
               />
-              <Text
-                style={styles.profileName}
-              >{`${vehicle.userId.firstName} ${vehicle.userId.lastName}`}</Text>
+              <Text style={styles.profileName}>{`${vehicle.userId.firstName} ${vehicle.userId.lastName}`}</Text>
             </View>
 
             <View
@@ -304,30 +288,40 @@ const CarDetailsScreen = ({ navigation, route }: Props) => {
                     <Comment
                       key={index}
                       user={`${comment.userId.firstName} ${comment.userId.lastName}`}
-                      userImage={comment.userId.imageUrl}
+                      userImage={comment.userId.imageUrl} 
                       date="Hace 2 días"
                       comment={comment.text}
                       rating={comment.stars}
                     />
                   ))
                 ) : (
-                  <Text style={styles.noCommentsText}>No hay comentarios.</Text>
+                  <Text style={styles.noCommentsText}>
+                    Este vehículo aún no ha sido calificado
+                  </Text>
                 )}
               </ScrollView>
             </View>
-
-            <Button
-              text="Rentar"
-              isPrimary
-              onClick={handleSubmission}
-              isSubmitting={isSubmitting}
-              isDisabled={
-                user._id === vehicle?.userId.uuid || isCurrentlyRented
-              }
-            />
           </>
         )}
       </ScrollView>
+
+      <View style={styles.buttonContainer}>
+        <View style={styles.buttonTextContainer}>
+          <Text style={styles.buttonTextLeft}>
+            {dateToString(startDate)} - {dateToString(endDate)}
+          </Text>
+          <Text style={styles.buttonTextRight}>
+            <Text style={styles.priceText}>${totalPrice}mxn</Text> total
+          </Text>
+        </View>
+        <Button
+          text="Rentar"
+          isPrimary
+          onClick={handleSubmission}
+          isSubmitting={isSubmitting}
+          isDisabled={user._id === vehicle?.userId.uuid || isCurrentlyRented}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -338,97 +332,166 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   content: {
-    flexGrow: 1,
-    padding: 20,
-  },
-  loaderContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 17,
+    paddingTop: 16,
   },
   pagerViewContainer: {
-    height: 250,
-    marginBottom: 20,
+    position: "relative",
+    width: "100%",
+    height: 231,
+    borderRadius: 8,
+    marginBottom: 16,
+    overflow: "hidden",
   },
   pagerView: {
-    flex: 1,
+    width: "100%",
+    height: 231,
   },
   pagerImage: {
     width: "100%",
-    height: "100%",
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  subtitleSecondary: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 5,
-  },
-  subtitleText: {
-    marginLeft: 5,
-    color: "#555555",
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  bulletPoints: {
-    marginLeft: 10,
-  },
-  bullet: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  price: {
-    fontSize: 16,
-  },
-  priceText: {
-    fontWeight: "bold",
-  },
-  grayText: {
-    color: "#888888",
-  },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  profileName: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  commentsContainer: {
-    marginTop: 20,
-  },
-  noCommentsText: {
-    color: "#888888",
-  },
-  buttonContainer: {
-    marginTop: 20,
-    marginBottom: 20,
+    height: 231,
   },
   arrowButton: {
     position: "absolute",
     top: "50%",
-    transform: [{ translateY: -25 }],
-    zIndex: 1,
+    transform: [{ translateY: -12 }],
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
   },
   leftArrow: {
     left: 10,
   },
   rightArrow: {
     right: 10,
+  },
+  title: {
+    fontFamily: "Inter",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  buttonContainer: {
+    width: "100%",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderColor: "#CCCCCC",
+    padding: 20,
+    paddingTop: 10,
+    marginBottom: 20,
+  },
+  subtitleSecondary: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  subtitleText: {
+    marginLeft: 4,
+    fontFamily: "Inter",
+    fontSize: 17,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: "500",
+    marginTop: 20,
+    fontFamily: "Inter",
+  },
+  bulletPoints: {
+    marginLeft: 20,
+  },
+  bullet: {
+    fontFamily: "Inter",
+    fontSize: 17,
+    marginLeft: 6,
+    color: "#7E7E7E",
+  },
+  descriptionText: {
+    fontFamily: "Inter",
+    fontSize: 17,
+    color: "#7E7E7E",
+    marginTop: 8,
+    marginLeft: 20,
+  },
+  price: {
+    fontFamily: "Inter",
+    fontSize: 17,
+    marginLeft: 6,
+  },
+  priceText: {
+    color: "#000000",
+    fontWeight: "600",
+  },
+  grayText: {
+    color: "#7E7E7E",
+  },
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingTop: 20,
+  },
+  profileImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginRight: 20,
+  },
+  profileName: {
+    textAlign: "left",
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  buttonTextContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  buttonTextLeft: {
+    fontFamily: "Inter",
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "500",
+  },
+  buttonTextRight: {
+    fontFamily: "Inter",
+    fontSize: 16,
+    color: "#7E7E7E",
+    fontWeight: "500",
+  },
+  commentsContainer: {
+    marginVertical: 20,
+    marginBottom: 30,
+  },
+  comment: {
+    backgroundColor: "#F5F5F5",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+  },
+  commentText: {
+    fontFamily: "Inter",
+    fontSize: 15,
+    color: "#333333",
+  },
+  commentAuthor: {
+    marginTop: 5,
+    fontFamily: "Inter",
+    fontSize: 13,
+    color: "#777777",
+  },
+  noCommentsText: {
+    fontFamily: "Inter",
+    fontSize: 15,
+    color: "#777777",
+    marginTop: 10,
+  },
+  loaderContainer: { // Estilo para el contenedor del indicador de carga
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
   },
 });
 

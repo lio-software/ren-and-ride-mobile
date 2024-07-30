@@ -7,6 +7,7 @@ import ListRentalsByLesseIdUseCase from "../application/usecases/ListRentalsByLe
 import CreateRentalUseCase from "../application/usecases/CreateRentalUseCase";
 import UpdateRentalUseCase from "../application/usecases/UpdateRentalUseCase";
 import IsRentalActiveByVehicleIdUseCase from "../application/usecases/IsRentalActiveByVehicleId";
+import GetPredictionsByUserIdUseCase from "../application/usecases/GetPredictionsByUserId";
 
 const rentalRepositoryAdapter: IRentalRepositoryPort = new RentalRepositoryAdapter();
 
@@ -16,11 +17,13 @@ const listRentalsByLesseId = new ListRentalsByLesseIdUseCase(rentalRepositoryAda
 const createRental = new CreateRentalUseCase(rentalRepositoryAdapter);
 const updateRental = new UpdateRentalUseCase(rentalRepositoryAdapter);
 const isRentalActiveByVehicleId = new IsRentalActiveByVehicleIdUseCase(rentalRepositoryAdapter);
+const getPredictionsByUserId = new GetPredictionsByUserIdUseCase(rentalRepositoryAdapter);
 
 export {listRentalsByLessorId, 
   getRentalById, 
   listRentalsByLesseId, 
   createRental,
   updateRental,
-  isRentalActiveByVehicleId
+  isRentalActiveByVehicleId,
+  getPredictionsByUserId
 };

@@ -22,9 +22,9 @@ const updateVehicleUseCase = new UpdateVehicleUseCase(vehicleRepositoryAdapter);
 
 export {
   listVehiclesUseCase,
-  createVehicleUseCase, 
-  listVehiclesByUserIdUseCase, 
-  getVehicleByIdUseCase, 
+  createVehicleUseCase,
+  listVehiclesByUserIdUseCase,
+  getVehicleByIdUseCase,
   getCommentsByVehicleIdUseCase,
   rateVehicleUseCase,
   updateVehicleUseCase

@@ -54,7 +54,7 @@ class RentalRepositoryAdapter implements IRentalRepositoryPort {
       return null;
     }
   }
-  
+
   async list(): Promise<RentalEntity[]> {
     try {
       const response = await axiosInstance.get('/rentals');
@@ -171,6 +171,21 @@ class RentalRepositoryAdapter implements IRentalRepositoryPort {
       return response.data.data;
     } catch (error) {
       console.error("Error al verificar si el alquiler está activo por vehicle_id:", error);
+      return null;
+    }
+  }
+
+  async getPredictionsByUserId(userId: string): Promise<any> {
+    try {
+      const body = {
+        uuid: userId
+      };
+
+      const response = await axiosInstance.post(`/sentiment/time_df`, body);
+
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener las predicciones por userId:", error);
       return null;
     }
   }

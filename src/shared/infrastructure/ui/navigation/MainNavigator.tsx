@@ -24,6 +24,7 @@ import RateExperienceScreen from '../../../../vehicles/infrastructure/ui/RateExp
 import RentalDetailScreen from "../../../../rentals/infrastructure/ui/screens/RentalDetailScreen";
 import MyRentalsScreen from "../../../../rentals/infrastructure/ui/screens/MyRentalsScreen";
 import DeleteMyAccountScreen from '../../../../vehicles/infrastructure/ui/DeleteMyAccountScreen';
+import MyPerformance from '../../../../rentals/infrastructure/ui/screens/MyPerformance';
 
 type RootStackParamList = {
   HomeTabs: undefined;
@@ -44,6 +45,7 @@ type RootStackParamList = {
   MyRentals: undefined;
   ActiveRentals: undefined;
   DeleteMyAccount: undefined;
+  MyPerformance: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -184,6 +186,11 @@ const MainNavigator = () => {
             <Stack.Screen
               name="DeleteMyAccount"
               component={DeleteMyAccountScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MyPerformance"
+              component={MyPerformance}
               options={{ headerShown: false }}
             />
             <Stack.Screen
